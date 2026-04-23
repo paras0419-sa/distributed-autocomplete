@@ -10,3 +10,6 @@ endfunction()
 
 autocomplete_add_test(common_error_test common/error_test.cpp)
 target_link_libraries(common_error_test PRIVATE autocomplete::common)
+
+autocomplete_add_test(common_result_test common/result_test.cpp)
+target_link_libraries(common_result_test PRIVATE autocomplete::common)
