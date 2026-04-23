@@ -19,3 +19,6 @@ target_link_libraries(memory_string_arena_test PRIVATE autocomplete::memory)
 
 autocomplete_add_test(index_entry_table_test index/entry_table_test.cpp)
 target_link_libraries(index_entry_table_test PRIVATE autocomplete::index)
+
+autocomplete_add_test(index_simple_trie_test index/simple_trie_test.cpp)
+target_link_libraries(index_simple_trie_test PRIVATE autocomplete::index)
