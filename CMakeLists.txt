@@ -14,7 +14,7 @@ enable_testing()
 
 add_subdirectory(libs/common)
 add_subdirectory(libs/memory)
-# add_subdirectory(libs/index)         # enabled in Task 1.2
+add_subdirectory(libs/index)
 # add_subdirectory(libs/query)         # enabled in Task 1.5
 add_subdirectory(bin/serving_node)
 add_subdirectory(tests/unit)
