@@ -25,3 +25,6 @@ target_link_libraries(index_simple_trie_test PRIVATE autocomplete::index)
 
 autocomplete_add_test(query_tokenizer_test query/tokenizer_test.cpp)
 target_link_libraries(query_tokenizer_test PRIVATE autocomplete::query)
+
+autocomplete_add_test(query_fixed_topk_test query/fixed_topk_test.cpp)
+target_link_libraries(query_fixed_topk_test PRIVATE autocomplete::query)
