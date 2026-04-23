@@ -66,19 +66,23 @@ distributed-autocomplete/
 ## Task 0.1: Initialize git repo + `.gitignore`
 
 **Files:**
+
 - Create: `.gitignore`
 
 - [ ] **Step 1: Initialize repo**
 
 Run:
+
 ```bash
 git init -b main
 ```
+
 Expected: `Initialized empty Git repository in .../distributed-autocomplete/.git/`
 
 - [ ] **Step 2: Create `.gitignore`**
 
 Write `.gitignore`:
+
 ```gitignore
 # Build
 build/
@@ -112,10 +116,12 @@ graph_info.json
 - [ ] **Step 3: Initial commit**
 
 Run:
+
 ```bash
 git add .gitignore docs/
 git commit -m "chore: initialize repo with spec and gitignore"
 ```
+
 Expected: commit hash printed, working tree clean.
 
 ---
@@ -123,6 +129,7 @@ Expected: commit hash printed, working tree clean.
 ## Task 0.2: Top-level `CMakeLists.txt` + warnings + sanitizers modules
 
 **Files:**
+
 - Create: `CMakeLists.txt`
 - Create: `cmake/Warnings.cmake`
 - Create: `cmake/Sanitizers.cmake`
@@ -185,9 +192,11 @@ add_subdirectory(tests/unit)
 - [ ] **Step 4: Verify configure fails cleanly** (subdirs don't exist yet)
 
 Run:
+
 ```bash
 cmake -S . -B build
 ```
+
 Expected: FAIL — `add_subdirectory given source "libs/common" which is not an existing directory`. This confirms the top-level is wired; subdirs come in subsequent tasks.
 
 - [ ] **Step 5: Commit**
@@ -202,6 +211,7 @@ git commit -m "build: top-level CMake, warning + sanitizer helpers"
 ## Task 0.3: Conan profile + `conanfile.txt`
 
 **Files:**
+
 - Create: `conanfile.txt`
 - Create: `.clang-format`
 
@@ -235,10 +245,12 @@ IncludeBlocks: Regroup
 - [ ] **Step 3: Install deps + verify Conan resolves**
 
 Run:
+
 ```bash
 conan profile detect --force
 conan install . --build=missing -s compiler.cppstd=20
 ```
+
 Expected: `conan_toolchain.cmake` written under `build/` (or `build/Release/generators/`). No resolution errors.
 
 - [ ] **Step 4: Commit**
@@ -253,6 +265,7 @@ git commit -m "build: Conan deps (gtest, benchmark, spdlog)"
 ## Task 0.4: `libs/common` — `Error` enum (TDD)
 
 **Files:**
+
 - Create: `libs/common/CMakeLists.txt`
 - Create: `libs/common/include/autocomplete/common/Error.h`
 - Create: `tests/unit/CMakeLists.txt`
@@ -309,9 +322,11 @@ TEST(ErrorTest, CodeToStringKnownCodes) {
 - [ ] **Step 4: Run — expect compile failure (header missing)**
 
 Run:
+
 ```bash
 cmake --build build --target common_error_test
 ```
+
 Expected: FAIL — `fatal error: 'autocomplete/common/Error.h' file not found`.
 
 - [ ] **Step 5: Implement `Error.h`**
@@ -355,9 +370,11 @@ class Error {
 - [ ] **Step 6: Run — expect PASS**
 
 Run:
+
 ```bash
 cmake --build build --target common_error_test && ctest --test-dir build -R common_error_test --output-on-failure
 ```
+
 Expected: `2 tests from ErrorTest ... PASSED`.
 
 - [ ] **Step 7: Commit**
@@ -372,6 +389,7 @@ git commit -m "feat(common): Error type with ErrorCode enum + to_string"
 ## Task 0.5: `libs/common` — `Result<T>` (TDD)
 
 **Files:**
+
 - Create: `libs/common/include/autocomplete/common/Result.h`
 - Create: `tests/unit/common/result_test.cpp`
 - Modify: `tests/unit/CMakeLists.txt` (add new test)
@@ -413,6 +431,7 @@ TEST(ResultTest, MoveOnlyValueTypeSupported) {
 - [ ] **Step 2: Register test in `tests/unit/CMakeLists.txt`**
 
 Append:
+
 ```cmake
 autocomplete_add_test(common_result_test common/result_test.cpp)
 target_link_libraries(common_result_test PRIVATE autocomplete::common)
@@ -421,9 +440,11 @@ target_link_libraries(common_result_test PRIVATE autocomplete::common)
 - [ ] **Step 3: Run — expect FAIL (header missing)**
 
 Run:
+
 ```bash
 cmake --build build --target common_result_test
 ```
+
 Expected: FAIL — header not found.
 
 - [ ] **Step 4: Implement `Result.h`**
@@ -462,9 +483,11 @@ class Result {
 - [ ] **Step 5: Run — expect PASS**
 
 Run:
+
 ```bash
 cmake --build build --target common_result_test && ctest --test-dir build -R common_result_test --output-on-failure
 ```
+
 Expected: 3 tests pass.
 
 - [ ] **Step 6: Commit**
@@ -479,6 +502,7 @@ git commit -m "feat(common): Result<T> with ok/err factories"
 ## Task 0.6: `bin/serving_node` — hello world
 
 **Files:**
+
 - Create: `bin/serving_node/CMakeLists.txt`
 - Create: `bin/serving_node/src/main.cpp`
 
@@ -504,10 +528,12 @@ int main() {
 - [ ] **Step 3: Build + run**
 
 Run:
+
 ```bash
 cmake --build build --target serving_node
 ./build/bin/serving_node/serving_node
 ```
+
 (Adjust path to wherever Conan's `cmake_layout` placed it; typical: `build/Release/bin/serving_node/serving_node`.)
 Expected stdout: `distributed-autocomplete serving_node (phase 0)`.
 
@@ -523,6 +549,7 @@ git commit -m "feat(bin): serving_node hello-world entry point"
 ## Task 0.7: CI — GitHub Actions with ASan + UBSan
 
 **Files:**
+
 - Create: `.github/workflows/ci.yml`
 
 - [ ] **Step 1: Write `.github/workflows/ci.yml`**
@@ -569,7 +596,7 @@ git add .github/workflows/ci.yml
 git commit -m "ci: clang-18 build+test with ASan/UBSan"
 ```
 
-*(Remote setup + push is a manual user step outside this plan — the workflow will exercise itself once pushed.)*
+_(Remote setup + push is a manual user step outside this plan — the workflow will exercise itself once pushed.)_
 
 **Phase 0 exit check:** `cmake --build build && ctest --test-dir build` builds everything and runs all tests green locally; `serving_node` prints its banner. ✅
 
@@ -582,6 +609,7 @@ git commit -m "ci: clang-18 build+test with ASan/UBSan"
 ## Task 1.1: `libs/memory/StringArena` (TDD)
 
 **Files:**
+
 - Create: `libs/memory/CMakeLists.txt`
 - Create: `libs/memory/include/autocomplete/memory/StringArena.h`
 - Create: `tests/unit/memory/string_arena_test.cpp`
@@ -696,6 +724,7 @@ git commit -m "feat(memory): StringArena with stable offset handles"
 ## Task 1.2: `libs/index/Entry` + `EntryTable` (TDD)
 
 **Files:**
+
 - Create: `libs/index/CMakeLists.txt`
 - Create: `libs/index/include/autocomplete/index/Entry.h`
 - Create: `libs/index/include/autocomplete/index/EntryTable.h`
@@ -718,7 +747,7 @@ autocomplete_apply_sanitizers(autocomplete_index)
 add_library(autocomplete::index ALIAS autocomplete_index)
 ```
 
-*(The file `src/SimpleTrie.cpp` will be created in Task 1.4. To let this task build now, create an empty placeholder: `mkdir -p libs/index/src && printf '// filled in Task 1.4\n' > libs/index/src/SimpleTrie.cpp`.)*
+_(The file `src/SimpleTrie.cpp` will be created in Task 1.4. To let this task build now, create an empty placeholder: `mkdir -p libs/index/src && printf '// filled in Task 1.4\n' > libs/index/src/SimpleTrie.cpp`.)_
 
 - [ ] **Step 2: Write the failing test** `tests/unit/index/entry_table_test.cpp`
 
@@ -763,6 +792,7 @@ TEST(EntryTableTest, EntryIsOneCacheLine) {
 - [ ] **Step 3: Register test**
 
 Append to `tests/unit/CMakeLists.txt`:
+
 ```cmake
 autocomplete_add_test(index_entry_table_test index/entry_table_test.cpp)
 target_link_libraries(index_entry_table_test PRIVATE autocomplete::index)
@@ -845,9 +875,10 @@ git commit -m "feat(index): Entry layout + EntryTable"
 ## Task 1.3: `FstIndex` interface
 
 **Files:**
+
 - Create: `libs/index/include/autocomplete/index/FstIndex.h`
 
-**Why a virtual interface for a perf-critical path:** v-table cost is one indirect call *per query* (not per trie node), amortized against ms-scale work. The flexibility to swap `SimpleTrie` → DAT → real FST across phases without touching `QueryExecutor` is worth 10ns.
+**Why a virtual interface for a perf-critical path:** v-table cost is one indirect call _per query_ (not per trie node), amortized against ms-scale work. The flexibility to swap `SimpleTrie` → DAT → real FST across phases without touching `QueryExecutor` is worth 10ns.
 
 - [ ] **Step 1: Write `FstIndex.h`**
 
@@ -897,6 +928,7 @@ git commit -m "feat(index): FstIndex interface (swappable backends)"
 ## Task 1.4: `SimpleTrie` — minimal `FstIndex` impl (TDD)
 
 **Files:**
+
 - Create: `libs/index/include/autocomplete/index/SimpleTrie.h`
 - Modify: `libs/index/src/SimpleTrie.cpp`
 - Create: `tests/unit/index/simple_trie_test.cpp`
@@ -967,6 +999,7 @@ TEST(SimpleTrieTest, EmptyPrefixIsRejected) {
 - [ ] **Step 2: Register test**
 
 Append to `tests/unit/CMakeLists.txt`:
+
 ```cmake
 autocomplete_add_test(index_simple_trie_test index/simple_trie_test.cpp)
 target_link_libraries(index_simple_trie_test PRIVATE autocomplete::index)
@@ -1072,6 +1105,7 @@ git commit -m "feat(index): SimpleTrie — pointer-trie FstIndex for v1"
 ## Task 1.5: `Tokenizer` (TDD)
 
 **Files:**
+
 - Create: `libs/query/CMakeLists.txt`
 - Create: `libs/query/include/autocomplete/query/Tokenizer.h`
 - Create: `libs/query/src/Tokenizer.cpp`
@@ -1096,7 +1130,7 @@ autocomplete_apply_sanitizers(autocomplete_query)
 add_library(autocomplete::query ALIAS autocomplete_query)
 ```
 
-*(Placeholder: `printf '// filled in Task 1.8\n' > libs/query/src/QueryExecutor.cpp` so CMake configures now.)*
+_(Placeholder: `printf '// filled in Task 1.8\n' > libs/query/src/QueryExecutor.cpp` so CMake configures now.)_
 
 - [ ] **Step 2: Write the failing test** `tests/unit/query/tokenizer_test.cpp`
 
@@ -1146,6 +1180,7 @@ Note: `tokenize` takes a reference to a caller-owned string so the returned `str
 - [ ] **Step 3: Register test**
 
 Append to `tests/unit/CMakeLists.txt`:
+
 ```cmake
 autocomplete_add_test(query_tokenizer_test query/tokenizer_test.cpp)
 target_link_libraries(query_tokenizer_test PRIVATE autocomplete::query)
@@ -1226,6 +1261,7 @@ git commit -m "feat(query): Tokenizer (lowercase ASCII, punct split)"
 ## Task 1.6: `FixedTopK` min-heap (TDD)
 
 **Files:**
+
 - Create: `libs/query/include/autocomplete/query/FixedTopK.h`
 - Create: `tests/unit/query/fixed_topk_test.cpp`
 - Modify: `tests/unit/CMakeLists.txt`
@@ -1286,6 +1322,7 @@ TEST(FixedTopKTest, ZeroCapacityStoresNothing) {
 - [ ] **Step 2: Register test**
 
 Append:
+
 ```cmake
 autocomplete_add_test(query_fixed_topk_test query/fixed_topk_test.cpp)
 target_link_libraries(query_fixed_topk_test PRIVATE autocomplete::query)
@@ -1366,6 +1403,7 @@ git commit -m "feat(query): FixedTopK bounded min-heap"
 ## Task 1.7: `IndexView` (TDD)
 
 **Files:**
+
 - Create: `libs/index/include/autocomplete/index/IndexView.h`
 - Create: `tests/unit/index/index_view_test.cpp`
 - Modify: `tests/unit/CMakeLists.txt`
@@ -1409,6 +1447,7 @@ TEST(IndexViewTest, BundlesAllThreeLayersAndVersion) {
 - [ ] **Step 2: Register test**
 
 Append:
+
 ```cmake
 autocomplete_add_test(index_view_test index/index_view_test.cpp)
 target_link_libraries(index_view_test PRIVATE autocomplete::index)
@@ -1473,6 +1512,7 @@ git commit -m "feat(index): IndexView bundles index + table + arena + version"
 ## Task 1.8: `QueryExecutor` — tokenize → walk → top-K (TDD)
 
 **Files:**
+
 - Create: `libs/query/include/autocomplete/query/QueryExecutor.h`
 - Modify: `libs/query/src/QueryExecutor.cpp`
 - Create: `tests/unit/query/query_executor_test.cpp`
@@ -1560,6 +1600,7 @@ TEST(QueryExecutorTest, CapacityBoundedByK) {
 - [ ] **Step 2: Register test**
 
 Append:
+
 ```cmake
 autocomplete_add_test(query_executor_test query/query_executor_test.cpp)
 target_link_libraries(query_executor_test PRIVATE autocomplete::query)
@@ -1669,6 +1710,7 @@ git commit -m "feat(query): QueryExecutor — prefix walk + top-K by weight"
 ## Task 1.9: `serving_node` — load CSV + stdin REPL
 
 **Files:**
+
 - Modify: `bin/serving_node/CMakeLists.txt`
 - Modify: `bin/serving_node/src/main.cpp`
 - Create: `scripts/gen_corpus.py`
@@ -1800,10 +1842,12 @@ if __name__ == "__main__":
 - [ ] **Step 4: Generate a corpus and manually exercise**
 
 Run:
+
 ```bash
 python3 scripts/gen_corpus.py -n 1000 > /tmp/corpus.csv
 ./build/Release/bin/serving_node/serving_node /tmp/corpus.csv
 ```
+
 At the prompt, type `rev` and press Enter. Expected: up to 10 `phrase\tweight` lines, ordered by weight descending, all containing a token with prefix `rev`. Ctrl-D to quit.
 
 **If this doesn't behave like that, stop and debug — do not move on.**
@@ -1820,6 +1864,7 @@ git commit -m "feat(bin): serving_node loads CSV corpus, stdin REPL prefix searc
 ## Task 1.10: Integration test — `serving_node` end-to-end
 
 **Files:**
+
 - Create: `tests/integration/CMakeLists.txt`
 - Create: `tests/integration/serving_node_e2e_test.cpp`
 - Create: `tests/integration/fixtures/small_corpus.csv`
@@ -1931,6 +1976,7 @@ git commit -m "test(integration): e2e corpus load + top-K query"
 ## Task 1.11: Seed a README manual-run section
 
 **Files:**
+
 - Create: `README.md`
 
 - [ ] **Step 1: Write `README.md`**
@@ -1980,6 +2026,7 @@ git commit -m "docs: README with build + Phase-1 REPL quickstart"
 - [ ] Every `libs/*` target enforces warnings-as-errors + sanitizers in debug/test builds.
 
 **Not in this plan, carried forward:**
+
 - Double-array trie swap (revisit after Phase 2 bench; may not be needed until Phase 6 FST work).
 - Thread-local bump arena (§5.2) — Phase 2, alongside the reactor thread model.
 - Mutable overlay (§4.3) — Phase 5 (events) or Phase 4 (artifact swap), whichever lands first.
